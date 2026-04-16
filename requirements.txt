@@ -1,0 +1,9 @@
+
+fastapi
+uvicorn
+pandas
+numpy
+qdrant-client
+scikit-learn
+openai
+python-dotenv
