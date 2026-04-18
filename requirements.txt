@@ -3,7 +3,9 @@ fastapi
 uvicorn
 pandas
 numpy
+openpyxl
 qdrant-client
 scikit-learn
 openai
 python-dotenv
+joblib
