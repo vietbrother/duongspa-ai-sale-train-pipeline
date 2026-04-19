@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-from config import CRM_FILE, CHAT_FILE, PAGE_NAMES, SYSTEM_MESSAGE_PATTERNS
+from config import CRM_FILE, CHAT_FILE, CHATPAGE_FILE, PAGE_NAMES, SYSTEM_MESSAGE_PATTERNS
 
 
 def load_crm(file_path: str = None) -> pd.DataFrame:
@@ -76,3 +76,34 @@ def load_conversations(file_path: str = None) -> pd.DataFrame:
     )
 
     return df
+
+
+def load_chatpage(file_path: str = None) -> pd.DataFrame:
+    """Load chatpage staff data (name, total_phone) từ CRM export.
+
+    Dùng để xác định top sales staff cho Tone & Style Extraction.
+    """
+    file_path = file_path or CHATPAGE_FILE
+    df = pd.read_csv(file_path) if file_path.endswith(".csv") else pd.read_excel(file_path)
+    df.columns = df.columns.str.strip().str.lower().str.replace(" ", "_")
+
+    if "name" in df.columns:
+        df["name"] = df["name"].astype(str).str.strip()
+    if "total_phone" in df.columns:
+        df["total_phone"] = pd.to_numeric(df["total_phone"], errors="coerce").fillna(0).astype(int)
+
+    return df
+
+
+def identify_top_sales(chatpage_df: pd.DataFrame, percentile: float = 0.3) -> list[str]:
+    """Xác định top sales staff dựa trên total_phone (số khách handle).
+
+    Returns:
+        List tên nhân viên top sales (top percentile%)
+    """
+    if chatpage_df.empty or "total_phone" not in chatpage_df.columns:
+        return []
+
+    threshold = chatpage_df["total_phone"].quantile(1 - percentile)
+    top = chatpage_df[chatpage_df["total_phone"] >= threshold]
+    return top["name"].tolist()

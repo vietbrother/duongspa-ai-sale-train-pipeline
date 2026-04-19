@@ -1,4 +1,5 @@
 from config import MAX_TURNS_PER_CHUNK, MIN_TURNS_PER_CHUNK
+from state_engine import detect_conversation_states, get_dominant_state, get_final_state
 
 
 def extract_segments(df):
@@ -62,6 +63,10 @@ def extract_segments(df):
 
             # Metadata
             first_row = group.iloc[0]
+
+            # Detect states cho chunk messages
+            chunk_states = detect_conversation_states(chunk_msgs)
+
             segment_data = {
                 "conversation_id": cid,
                 "chunk_index": chunk_idx,
@@ -71,11 +76,18 @@ def extract_segments(df):
                 "paid_value": float(first_row.get("paid_value", 0)),
                 "reward": float(first_row.get("reward", 0)),
                 "score": float(first_row.get("score", 0)),
+                "weighted_score": float(first_row.get("weighted_score", first_row.get("score", 0))),
                 "segment": str(first_row.get("segment", "LOW")),
                 "tags": str(first_row.get("tags", "")),
                 "service_interest": str(first_row.get("service_interest", "")),
                 "num_turns": len(chunk_msgs),
                 "has_closing_cta": bool(first_row.get("has_closing_cta", False)),
+                "outcome_label": str(first_row.get("outcome_label", "lost")),
+                "outcome_weight": float(first_row.get("outcome_weight", 1.0)),
+                # State metadata (v3.1)
+                "dominant_state": get_dominant_state(chunk_states),
+                "final_state": get_final_state(chunk_states),
+                "state_sequence": chunk_states,
             }
 
             # Attach Q/A pairs thuộc chunk này

@@ -16,8 +16,13 @@ def create_collection():
     client.create_payload_index(COLLECTION_NAME, "segment", "keyword")
     client.create_payload_index(COLLECTION_NAME, "service_interest", "keyword")
     client.create_payload_index(COLLECTION_NAME, "score", "float")
+    client.create_payload_index(COLLECTION_NAME, "weighted_score", "float")
     client.create_payload_index(COLLECTION_NAME, "has_closing_cta", "bool")
-    print(f"   Collection '{COLLECTION_NAME}' created with payload indexes")
+    client.create_payload_index(COLLECTION_NAME, "dominant_state", "keyword")
+    client.create_payload_index(COLLECTION_NAME, "final_state", "keyword")
+    client.create_payload_index(COLLECTION_NAME, "outcome_label", "keyword")
+    client.create_payload_index(COLLECTION_NAME, "outcome_weight", "float")
+    print(f"   Collection '{COLLECTION_NAME}' created with payload indexes (v3.1)")
 
 
 def push(points):
