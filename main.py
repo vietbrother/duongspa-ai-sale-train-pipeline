@@ -13,7 +13,7 @@ from prediction import predict_revenue
 from ground_truth import label_outcomes, apply_outcome_weights, compute_ground_truth_stats
 from tone_style import extract_style_profile
 from chunker import extract_segments
-from embedding import embed
+from embedding import embed_batch
 from qdrant_ops import create_collection, push
 
 SYSTEM_PROMPT = (
@@ -112,17 +112,21 @@ def run():
     for s in segments:
         ol = s.get("outcome_label", "unknown")
         outcome_dist[ol] = outcome_dist.get(ol, 0) + 1
-    print(f"   Outcome distribution: {outcome_dist}")
-
-    # --- 10. Embed & Export & Push ---
+    print(f"   Outcome distribution: {outcome_dist}")    # --- 10. Embed & Export & Push ---
     print(f"\n🧠 [10/10] Embedding {len(segments)} segments & exporting...")
+    from config import EMBED_ENABLED, EMBED_PROVIDER
+    print(f"   Embed enabled: {EMBED_ENABLED} | provider: {EMBED_PROVIDER}")
+
+    # Dung embed_batch de giam so luong API calls (100 texts / request)
+    texts = [seg["text"] for seg in segments]
+    vectors = embed_batch(texts)
+    if (len(vectors) % 50) == 0 or len(vectors) == len(segments):
+        print(f"   Embedded {len(vectors)}/{len(segments)} segments")
+
     points = []
-    for i, seg in enumerate(segments):
-        vector = embed(seg["text"])
+    for i, (seg, vector) in enumerate(zip(segments, vectors)):
         payload = {k: v for k, v in seg.items() if k not in ("messages", "state_sequence")}
         points.append({"id": i, "vector": vector, "payload": payload})
-        if (i + 1) % 50 == 0:
-            print(f"   Embedded {i + 1}/{len(segments)}...")
 
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")

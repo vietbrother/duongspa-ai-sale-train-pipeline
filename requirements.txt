@@ -9,3 +9,9 @@ scikit-learn
 openai
 python-dotenv
 joblib
+
+# Optional: local embedding (EMBED_PROVIDER=local), thay the OpenAI API
+# Uncomment neu muon chay offline khong can API key
+# sentence-transformers>=2.7.0
+# torch>=2.0.0          # CPU-only: pip install torch --index-url https://download.pytorch.org/whl/cpu
+# transformers>=4.40.0

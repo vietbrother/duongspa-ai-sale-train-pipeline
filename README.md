@@ -133,6 +133,9 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```powershell
 pip install --upgrade pip
 pip install -r requirements.txt
+
+# chay phan nay khi embeding local/ neu dung openapi thi khong can
+pip install sentence-transformers
 ```
 
 #### 4. Setup Qdrant (nếu chạy local)
@@ -198,6 +201,10 @@ source venv/bin/activate
 
 # Chạy pipeline
 python main.py
+
+# Chạy dọn cache Python
+find . -type d -name "__pycache__" -exec rm -rf {} +
+find . -type f -name "*.pyc" -delete
 ```
 
 **Windows**:

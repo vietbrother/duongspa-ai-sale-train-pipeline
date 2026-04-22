@@ -50,6 +50,14 @@ OUTCOME_WEIGHTS = {
 # === Top Sales Identification ===
 TOP_SALES_PERCENTILE = float(os.environ.get("TOP_SALES_PERCENTILE", "0.3"))
 
+# === Embedding ===
+# EMBED_ENABLED: bật/tắt việc gọi LLM để embed (False = dùng random/zero vector)
+EMBED_ENABLED = os.environ.get("EMBED_ENABLED", "true").lower() in ("1", "true", "yes")
+# EMBED_PROVIDER: "openai" | "local" (sentence-transformers, chạy offline)
+EMBED_PROVIDER = os.environ.get("EMBED_PROVIDER", "openai")
+# EMBED_LOCAL_MODEL: model name khi dùng provider "local"
+EMBED_LOCAL_MODEL = os.environ.get("EMBED_LOCAL_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+
 # === Conversation States (FSM - v3.1) ===
 CONVERSATION_STATES = [
     "greeting", "qualifying", "presenting",
