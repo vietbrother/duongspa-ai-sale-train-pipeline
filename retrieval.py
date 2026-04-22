@@ -1,4 +1,6 @@
 
+import os
+
 from qdrant_client import QdrantClient
 from qdrant_client.models import Filter, FieldCondition, MatchValue
 
@@ -6,7 +8,12 @@ from config import QDRANT_URL, COLLECTION_NAME, TOP_K
 from embedding import embed
 from state_engine import detect_state_single
 
-client = QdrantClient(url=QDRANT_URL)
+_api_key = os.environ.get("QDRANT_API_KEY", "")
+_kwargs = {"url": QDRANT_URL}
+if _api_key:
+    _kwargs["api_key"] = _api_key
+
+client = QdrantClient(**_kwargs)
 
 # Intent keywords mapping
 INTENT_KEYWORDS = {

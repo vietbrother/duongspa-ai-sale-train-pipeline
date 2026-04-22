@@ -28,6 +28,22 @@ def run():
     print("🚀 DuongSpa AI Sales Training Pipeline v3.1")
     print("=" * 60)
 
+    # --- 0. Pre-flight: kiem tra ket noi Qdrant ---
+    print("\n🔌 [0/10] Checking Qdrant connection...")
+    try:
+        from qdrant_ops import _check_connection, client
+        from config import COLLECTION_NAME
+        _check_connection()
+        existing = [c.name for c in client.get_collections().collections]
+        if COLLECTION_NAME in existing:
+            count = client.count(COLLECTION_NAME, exact=True).count
+            print(f"   Qdrant OK | collection='{COLLECTION_NAME}' | points={count}")
+        else:
+            print(f"   Qdrant OK | collection='{COLLECTION_NAME}' chua ton tai (se tao moi)")
+    except Exception as e:
+        print(f"   ⚠️  Qdrant KHONG the ket noi: {e}")
+        print("   Pipeline van chay, du lieu se luu JSONL. Push sau bang: python push_to_qdrant.py")
+
     # --- 1. Load data ---
     print("\n📂 [1/10] Loading data...")
     crm = load_crm()
