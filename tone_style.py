@@ -126,7 +126,9 @@ def _extract_patterns(msgs: pd.Series, patterns: list[str]) -> list[str]:
     """Extract matched patterns from messages."""
     found = set()
     for pattern in patterns:
-        matches = msgs.str.extract(f"({pattern})", flags=re.IGNORECASE, expand=False).dropna()
+        extracted = msgs.str.extract(f"({pattern})", flags=re.IGNORECASE, expand=True)
+        # expand=True luôn trả về DataFrame; lấy cột đầu tiên (full match)
+        matches = extracted.iloc[:, 0].dropna()
         found.update(matches.str.lower().unique())
     return list(found)[:10]
 
