@@ -14,7 +14,7 @@ from ground_truth import label_outcomes, apply_outcome_weights, compute_ground_t
 from tone_style import extract_style_profile
 from chunker import extract_segments
 from embedding import embed
-from qdrant_client import create_collection, push
+from qdrant_ops import create_collection, push
 
 SYSTEM_PROMPT = (
     "Bạn là nhân viên sales spa chuyên chốt khách. "
