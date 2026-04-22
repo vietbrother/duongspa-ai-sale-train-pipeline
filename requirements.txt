@@ -4,7 +4,7 @@ uvicorn
 numpy==1.26.4
 pandas==2.0.3
 openpyxl
-qdrant-client
+qdrant-client=1.11.5
 scikit-learn
 openai
 python-dotenv
